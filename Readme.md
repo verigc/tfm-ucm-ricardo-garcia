@@ -1,9 +1,9 @@
 # TFM: Pipeline de Datos Serverless en AWS
-Este repositorio contiene el código fuente y la plantilla de infraestructura para el Trabajo Fin de Máster, que consiste en un pipeline de datos automatizado para la ingesta y procesamiento de fuentes públicas, construido con tecnologías serverless de AWS.
+Este repositorio contiene el código fuente y la plantilla de infraestructura para un pipeline de datos automatizado para la ingesta y procesamiento de fuentes públicas, construido con tecnologías serverless de AWS.
 
 El proyecto se despliega utilizando el framework AWS SAM (Serverless Application Model), lo que garantiza que toda la arquitectura pueda ser replicada de forma consistente y automática.
 
-Arquitectura
+## Arquitectura
 La solución se compone de los siguientes recursos principales de AWS:
 
 AWS Step Functions: Orquesta el flujo de trabajo completo, desde la ingesta hasta la transformación final.
@@ -16,7 +16,7 @@ Amazon S3: Actúa como Data Lake, almacenando los datos en diferentes etapas (cr
 
 IAM Roles: Define los permisos necesarios para que los servicios interactúen entre sí de forma segura.
 
-Prerrequisitos
+## Prerrequisitos
 Antes de comenzar, asegúrate de tener instaladas y configuradas las siguientes herramientas en tu máquina local:
 
 Una cuenta de AWS: con permisos para crear los recursos mencionados.
@@ -36,6 +36,7 @@ Bash
 
 git clone [https://github.com/verigc/tfm-ucm-ricardo-garcia.git]
 cd [tfm-ucm-ricardo-garcia]
+
 2. Construir el Proyecto
 Este comando preparará los artefactos de la aplicación, instalará las dependencias de cada función Lambda y las dejará listas para ser empaquetadas.
 
