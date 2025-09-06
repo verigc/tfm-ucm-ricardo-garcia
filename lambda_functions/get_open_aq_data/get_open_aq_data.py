@@ -8,17 +8,46 @@ from datetime import datetime, timezone
 import io
 import awswrangler as wr
 import boto3
+from botocore.exceptions import ClientError
 import os 
 
-headers = {'X-API-Key': '71c0183ac47f04eb410422bb29540a3b1dc165c2895336c2973d40d280fa9253',
- 'accept': 'application/json',
- 'content-type': 'application/json'}
+
+
+def get_secret(secret_name):
+
+    region_name = "us-east-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    secret = get_secret_value_response['SecretString']
+    secret = json.loads(secret)
+
+    return secret
 
 
 def make_api_request(url, params, max_retries=5, initial_delay=1):
     """
     Realiza una solicitud a la API con manejo de reintentos y límites de tasa.
     """
+    CLAVE_API = get_secret('tfm-ucm').get('openaq')
+    headers = {'X-API-Key': CLAVE_API,
+        'accept': 'application/json',
+        'content-type': 'application/json'}
+    
     for attempt in range(max_retries):
         try:
             response = requests.get(url, params=params, headers=headers)
