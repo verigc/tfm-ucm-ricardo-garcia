@@ -27,14 +27,16 @@ AWS SAM CLI: [Instrucciones de instalación](https://docs.aws.amazon.com/serverl
 
 Git: Para clonar este [repositorio](https://github.com).
 
-Instrucciones de Despliegue
+Bucket creado en S3  
+
+## Instrucciones de Despliegue  
 Para desplegar la arquitectura completa en tu cuenta de AWS, sigue estos pasos desde tu terminal:
 
 1. Clonar el Repositorio
 
 ```
-git clone [https://github.com/verigc/tfm-ucm-ricardo-garcia.git]  
-cd [tfm-ucm-ricardo-garcia]
+git clone https://github.com/verigc/tfm-ucm-ricardo-garcia.git  
+cd tfm-ucm-ricardo-garcia
 ```
 
 2. Construir el Proyecto
