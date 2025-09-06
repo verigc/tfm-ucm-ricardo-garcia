@@ -1,0 +1,1090 @@
+{
+	"jobConfig": {
+		"name": "OpenAQ_ETL",
+		"description": "",
+		"role": "arn:aws:iam::533267130424:role/service-role/AWSGlueServiceRole",
+		"command": "glueetl",
+		"version": "5.0",
+		"runtime": null,
+		"workerType": "G.1X",
+		"numberOfWorkers": 2,
+		"maxCapacity": 2,
+		"jobRunQueuingEnabled": false,
+		"maxRetries": 0,
+		"timeout": 480,
+		"maxConcurrentRuns": 1,
+		"security": "none",
+		"scriptName": "OpenAQ_ETL.py",
+		"scriptLocation": "s3://aws-glue-assets-533267130424-us-east-1/scripts/",
+		"language": "python-3",
+		"spark": true,
+		"sparkConfiguration": "standard",
+		"jobParameters": [],
+		"tags": [],
+		"jobMode": "VISUAL_MODE",
+		"createdOn": "2025-08-27T01:17:17.579Z",
+		"developerMode": false,
+		"connectionsList": [],
+		"temporaryDirectory": "s3://aws-glue-assets-533267130424-us-east-1/temporary/",
+		"glueHiveMetastore": true,
+		"etlAutoTuning": true,
+		"metrics": true,
+		"observabilityMetrics": true,
+		"pythonPath": "s3://aws-glue-studio-transforms-510798373988-prod-us-east-1/gs_common.py,s3://aws-glue-studio-transforms-510798373988-prod-us-east-1/gs_derived.py",
+		"bookmark": "job-bookmark-disable",
+		"sparkPath": "s3://aws-glue-assets-533267130424-us-east-1/sparkHistoryLogs/",
+		"flexExecution": false,
+		"minFlexWorkers": null,
+		"maintenanceWindow": null,
+		"dependentPath": "",
+		"additionalPythonModules": ""
+	},
+	"dag": {
+		"node-1756428788482": {
+			"nodeId": "node-1756428788482",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756428719394"
+			],
+			"name": "Derived Column month",
+			"generatedNodeName": "DerivedColumnmonth_node1756428788482",
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"parameters": [
+				{
+					"name": "colName",
+					"value": [
+						"month"
+					],
+					"isOptional": null,
+					"type": "str",
+					"listType": null
+				},
+				{
+					"name": "expr",
+					"value": [
+						"month(datetimeto)"
+					],
+					"isOptional": null,
+					"type": "str",
+					"listType": null
+				}
+			],
+			"functionName": "gs_derived",
+			"path": "s3://aws-glue-studio-transforms-510798373988-prod-us-east-1/gs_derived.py",
+			"version": "1.0.0",
+			"transformName": "gs_derived",
+			"outputSchemas": [
+				[
+					{
+						"key": "value",
+						"fullPath": [
+							"value"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sensor_id",
+						"fullPath": [
+							"sensor_id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimeFrom",
+						"fullPath": [
+							"datetimeFrom"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimeTo",
+						"fullPath": [
+							"datetimeTo"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "min",
+						"fullPath": [
+							"min"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q02",
+						"fullPath": [
+							"q02"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q25",
+						"fullPath": [
+							"q25"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "median",
+						"fullPath": [
+							"median"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q75",
+						"fullPath": [
+							"q75"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q98",
+						"fullPath": [
+							"q98"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "max",
+						"fullPath": [
+							"max"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "avg",
+						"fullPath": [
+							"avg"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sd",
+						"fullPath": [
+							"sd"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "year",
+						"fullPath": [
+							"year"
+						],
+						"type": "int",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "month",
+						"fullPath": [
+							"month"
+						],
+						"type": "int",
+						"glueStudioType": null,
+						"children": null
+					}
+				]
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756254701447": {
+			"nodeId": "node-1756254701447",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [],
+			"name": "locations",
+			"generatedNodeName": "locations_node1756254701447",
+			"classification": "DataSource",
+			"type": "S3",
+			"isCatalog": false,
+			"format": "parquet",
+			"paths": [
+				"s3://tfm-ucm/staging/OpenAQ/locations/locations.parquet"
+			],
+			"compressionType": null,
+			"exclusions": [],
+			"groupFiles": null,
+			"groupSize": null,
+			"recurse": true,
+			"maxBand": null,
+			"maxFilesInBand": null,
+			"additionalOptions": {
+				"boundedSize": null,
+				"boundedFiles": null,
+				"enableSamplePath": false,
+				"samplePath": "s3://tfm-ucm/staging/OpenAQ/locations/locations.parquet",
+				"boundedOption": null
+			},
+			"outputSchemas": [
+				[
+					{
+						"key": "id",
+						"fullPath": [
+							"id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "name",
+						"fullPath": [
+							"name"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "locality",
+						"fullPath": [
+							"locality"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "timezone",
+						"fullPath": [
+							"timezone"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "country",
+						"fullPath": [
+							"country"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "ismonitor",
+						"fullPath": [
+							"ismonitor"
+						],
+						"type": "boolean",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "bounds",
+						"fullPath": [
+							"bounds"
+						],
+						"type": "double array",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimefirst",
+						"fullPath": [
+							"datetimefirst"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimelast",
+						"fullPath": [
+							"datetimelast"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "latitud",
+						"fullPath": [
+							"latitud"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "longitud",
+						"fullPath": [
+							"longitud"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sensor_id",
+						"fullPath": [
+							"sensor_id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "parameter_id",
+						"fullPath": [
+							"parameter_id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					}
+				]
+			],
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756255147815": {
+			"nodeId": "node-1756255147815",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [],
+			"name": "parameters",
+			"generatedNodeName": "parameters_node1756255147815",
+			"classification": "DataSource",
+			"type": "S3",
+			"isCatalog": false,
+			"format": "parquet",
+			"paths": [
+				"s3://tfm-ucm/staging/OpenAQ/parameters/parameters.parquet"
+			],
+			"compressionType": null,
+			"exclusions": [],
+			"groupFiles": null,
+			"groupSize": null,
+			"recurse": true,
+			"maxBand": null,
+			"maxFilesInBand": null,
+			"additionalOptions": {
+				"boundedSize": null,
+				"boundedFiles": null,
+				"enableSamplePath": false,
+				"samplePath": "s3://tfm-ucm/staging/OpenAQ/parameters/parameters.parquet",
+				"boundedOption": null
+			},
+			"outputSchemas": [
+				[
+					{
+						"key": "id",
+						"fullPath": [
+							"id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "name",
+						"fullPath": [
+							"name"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "units",
+						"fullPath": [
+							"units"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "displayname",
+						"fullPath": [
+							"displayname"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "description",
+						"fullPath": [
+							"description"
+						],
+						"type": "string",
+						"glueStudioType": null,
+						"children": null
+					}
+				]
+			],
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756255502469": {
+			"nodeId": "node-1756255502469",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756255337579",
+				"node-1756255241507"
+			],
+			"name": "Join Loca-Param",
+			"generatedNodeName": "JoinLocaParam_node1756255502469",
+			"classification": "Transform",
+			"type": "Join",
+			"joinType": "equijoin",
+			"columns": [
+				{
+					"from": "node-1756255337579",
+					"keys": [
+						"parameter_id"
+					]
+				},
+				{
+					"from": "node-1756255241507",
+					"keys": [
+						"id"
+					]
+				}
+			],
+			"columnConditions": [
+				"="
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756257717126": {
+			"nodeId": "node-1756257717126",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756257361750"
+			],
+			"name": "Datalake",
+			"generatedNodeName": "Datalake_node1756257717126",
+			"classification": "DataSink",
+			"type": "S3",
+			"streamingBatchInterval": 100,
+			"format": "glueparquet",
+			"compression": "snappy",
+			"numberTargetPartitions": "1",
+			"path": "s3://tfm-ucm/processed/openaq/measurements/",
+			"partitionKeys": [
+				"locality",
+				"year",
+				"month"
+			],
+			"schemaChangePolicy": {
+				"enableUpdateCatalog": false,
+				"updateBehavior": "UPDATE_IN_DATABASE",
+				"database": "tfm-ucm",
+				"table": "measurements"
+			},
+			"updateCatalogOptions": "none",
+			"autoDataQuality": {
+				"isEnabled": false,
+				"evaluationContext": "EvaluateDataQuality_node1756253350507"
+			},
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756257361750": {
+			"nodeId": "node-1756257361750",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756428788482",
+				"node-1756255502469"
+			],
+			"name": "Final Join",
+			"generatedNodeName": "FinalJoin_node1756257361750",
+			"classification": "Transform",
+			"type": "Join",
+			"joinType": "equijoin",
+			"columns": [
+				{
+					"from": "node-1756428788482",
+					"keys": [
+						"sensor_id"
+					]
+				},
+				{
+					"from": "node-1756255502469",
+					"keys": [
+						"sensor_id"
+					]
+				}
+			],
+			"columnConditions": [
+				"="
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756255337579": {
+			"nodeId": "node-1756255337579",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756254701447"
+			],
+			"name": "Change Schema Locations",
+			"generatedNodeName": "ChangeSchemaLocations_node1756255337579",
+			"classification": "Transform",
+			"type": "ApplyMapping",
+			"mapping": [
+				{
+					"toKey": "id",
+					"fromPath": [
+						"id"
+					],
+					"toType": "long",
+					"fromType": "bigint",
+					"dropped": false
+				},
+				{
+					"toKey": "locations_name",
+					"fromPath": [
+						"name"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "locality",
+					"fromPath": [
+						"locality"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "timezone",
+					"fromPath": [
+						"timezone"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "country",
+					"fromPath": [
+						"country"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "ismonitor",
+					"fromPath": [
+						"ismonitor"
+					],
+					"toType": "boolean",
+					"fromType": "boolean",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "bounds",
+					"fromPath": [
+						"bounds"
+					],
+					"toType": "array",
+					"fromType": "array",
+					"dropped": true,
+					"children": null
+				},
+				{
+					"toKey": "datetimefirst",
+					"fromPath": [
+						"datetimefirst"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": true,
+					"children": null
+				},
+				{
+					"toKey": "datetimelast",
+					"fromPath": [
+						"datetimelast"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": true,
+					"children": null
+				},
+				{
+					"toKey": "latitud",
+					"fromPath": [
+						"latitud"
+					],
+					"toType": "double",
+					"fromType": "double",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "longitud",
+					"fromPath": [
+						"longitud"
+					],
+					"toType": "double",
+					"fromType": "double",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "sensor_id",
+					"fromPath": [
+						"sensor_id"
+					],
+					"toType": "long",
+					"fromType": "bigint",
+					"dropped": false
+				},
+				{
+					"toKey": "parameter_id",
+					"fromPath": [
+						"parameter_id"
+					],
+					"toType": "long",
+					"fromType": "bigint",
+					"dropped": false
+				}
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756172542186": {
+			"nodeId": "node-1756172542186",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [],
+			"name": "measurements",
+			"generatedNodeName": "measurements_node1756172542186",
+			"classification": "DataSource",
+			"type": "S3",
+			"isCatalog": false,
+			"format": "parquet",
+			"paths": [
+				"s3://tfm-ucm/staging/OpenAQ/measurements/"
+			],
+			"compressionType": null,
+			"exclusions": [],
+			"groupFiles": null,
+			"groupSize": null,
+			"recurse": true,
+			"maxBand": null,
+			"maxFilesInBand": null,
+			"additionalOptions": {
+				"boundedSize": null,
+				"boundedFiles": null,
+				"enableSamplePath": false,
+				"samplePath": "s3://tfm-ucm/staging/OpenAQ/measurements/10000.parquet",
+				"boundedOption": null
+			},
+			"outputSchemas": [
+				[
+					{
+						"key": "value",
+						"fullPath": [
+							"value"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sensor_id",
+						"fullPath": [
+							"sensor_id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimefrom",
+						"fullPath": [
+							"datetimefrom"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimeto",
+						"fullPath": [
+							"datetimeto"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "min",
+						"fullPath": [
+							"min"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q02",
+						"fullPath": [
+							"q02"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q25",
+						"fullPath": [
+							"q25"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "median",
+						"fullPath": [
+							"median"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q75",
+						"fullPath": [
+							"q75"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q98",
+						"fullPath": [
+							"q98"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "max",
+						"fullPath": [
+							"max"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "avg",
+						"fullPath": [
+							"avg"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sd",
+						"fullPath": [
+							"sd"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					}
+				]
+			],
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756255241507": {
+			"nodeId": "node-1756255241507",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756255147815"
+			],
+			"name": "Change Schema Parameters",
+			"generatedNodeName": "ChangeSchemaParameters_node1756255241507",
+			"classification": "Transform",
+			"type": "ApplyMapping",
+			"mapping": [
+				{
+					"toKey": "id",
+					"fromPath": [
+						"id"
+					],
+					"toType": "long",
+					"fromType": "bigint",
+					"dropped": false
+				},
+				{
+					"toKey": "parameter_name",
+					"fromPath": [
+						"name"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "parameter_units",
+					"fromPath": [
+						"units"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "parameter_displayname",
+					"fromPath": [
+						"displayname"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				},
+				{
+					"toKey": "parameter_description",
+					"fromPath": [
+						"description"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false,
+					"children": null
+				}
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1756428719394": {
+			"nodeId": "node-1756428719394",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1756172542186"
+			],
+			"name": "Derived Column year",
+			"generatedNodeName": "DerivedColumnyear_node1756428719394",
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"parameters": [
+				{
+					"name": "colName",
+					"value": [
+						"year"
+					],
+					"isOptional": null,
+					"type": "str",
+					"listType": null
+				},
+				{
+					"name": "expr",
+					"value": [
+						"year(datetimeto)"
+					],
+					"isOptional": null,
+					"type": "str",
+					"listType": null
+				}
+			],
+			"functionName": "gs_derived",
+			"path": "s3://aws-glue-studio-transforms-510798373988-prod-us-east-1/gs_derived.py",
+			"version": "1.0.0",
+			"transformName": "gs_derived",
+			"outputSchemas": [
+				[
+					{
+						"key": "value",
+						"fullPath": [
+							"value"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sensor_id",
+						"fullPath": [
+							"sensor_id"
+						],
+						"type": "bigint",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimeFrom",
+						"fullPath": [
+							"datetimeFrom"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "datetimeTo",
+						"fullPath": [
+							"datetimeTo"
+						],
+						"type": "timestamp",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "min",
+						"fullPath": [
+							"min"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q02",
+						"fullPath": [
+							"q02"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q25",
+						"fullPath": [
+							"q25"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "median",
+						"fullPath": [
+							"median"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q75",
+						"fullPath": [
+							"q75"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "q98",
+						"fullPath": [
+							"q98"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "max",
+						"fullPath": [
+							"max"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "avg",
+						"fullPath": [
+							"avg"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "sd",
+						"fullPath": [
+							"sd"
+						],
+						"type": "double",
+						"glueStudioType": null,
+						"children": null
+					},
+					{
+						"key": "year",
+						"fullPath": [
+							"year"
+						],
+						"type": "int",
+						"glueStudioType": null,
+						"children": null
+					}
+				]
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		}
+	},
+	"hasBeenSaved": false,
+	"usageProfileName": null
+}

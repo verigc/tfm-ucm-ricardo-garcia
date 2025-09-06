@@ -1,0 +1,169 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  TFM - Pipeline de datos serverless para la ingesta y procesamiento de datos públicos.
+  Este template define la máquina de estados, las funciones Lambda y el job de Glue necesarios.
+
+Parameters:
+  S3BucketName: s3://tfm-ucm
+    Type: String
+    Description: Nombre del bucket S3 donde se almacenarán los datos crudos y procesados.
+
+Resources:
+  # ================================================================================= #
+  #                             Funciones Lambda                                      #
+  # ================================================================================= #
+  GetHealthDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getHealthData
+      CodeUri: lambda_functions/getHealthData/
+      Handler: getHealthData.lambda_handler
+      Runtime: python3.10
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
+
+  GetReeDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get_ree_data
+      CodeUri: lambda_functions/get_ree_data/
+      Handler: get_ree_data.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
+
+  GetOpenAqSensorsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get_openaq_sensors
+      CodeUri: lambda_functions/get_openaq_sensors/
+      Handler: get_openaq_sensors.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
+  
+  GetOpenAqDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get_open_aq_data
+      CodeUri: lambda_functions/get_open_aq_data/
+      Handler: get_open_aq_data.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
+
+  DividirSensoresEnLotesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DividirSensoresEnLotes
+      CodeUri: lambda_functions/DividirSensoresEnLotes/
+      Handler: DividirSensoresEnLotes.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
+
+  # NOTA: Debes crear también la función Lambda para la sub-máquina de estados si es necesaria.
+  # Por ejemplo, si OpenAQStepFunction también invoca una lambda.
+
+  # ================================================================================= #
+  #                                 Job de AWS Glue                                   #
+  # ================================================================================= #
+  GlueEtlJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: glue.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: GlueS3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub "arn:aws:s3:::${S3BucketName}/*"
+        - PolicyName: GlueLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+  
+  OpenAqEtlJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: OpenAQ_ETL
+      Role: !GetAtt GlueEtlJobRole.Arn
+      Command:
+        Name: glueetl
+        PythonVersion: '3'
+        ScriptLocation: !Sub "s3://${S3BucketName}/scripts/OpenAQ_ETL.py" # <-- SAM subirá aquí el script
+      DefaultArguments:
+        "--enable-metrics": ""
+      MaxRetries: 0
+      GlueVersion: "3.0"
+
+  # ================================================================================= #
+  #                             Máquinas de Estados (Step Functions)                  #
+  # ================================================================================= #
+  OpenAQStepFunction:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: OpenAQStepFunction
+      DefinitionUri: step_function_definition/maquinaTrabajadora.yaml
+      DefinitionSubstitutions:
+        lambdainvoke_FunctionName_3b6f8908: !Ref GetOpenAqDataFunction
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetOpenAqDataFunction
+
+  MainStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: MainDataPipeline
+      # Apunta al archivo en tu estructura local
+      DefinitionUri: step_function_definition/maquinaOrquestadora.yaml
+      # Aquí reemplazamos las variables fijas por referencias a los recursos de este template
+      DefinitionSubstitutions:        
+        lambdainvoke_FunctionName_da2c6513: !Ref GetHealthDataFunction
+        lambdainvoke_FunctionName_41498395: !Ref GetReeDataFunction
+        lambdainvoke_FunctionName_23e55163: !Ref GetOpenAqSensorsFunction
+        lambdainvoke_FunctionName_3355674c: !Ref DividirSensoresEnLotesFunction
+        statesstartExecution_StateMachineArn_9f9859de: !Ref OpenAQStepFunction
+        gluestartJobRun_JobName_5944c74e: !Ref OpenAqEtlJob
+      # Políticas de permisos para la máquina de estados principal
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetHealthDataFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetReeDataFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetOpenAqSensorsFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref DividirSensoresEnLotesFunction
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !GetAtt OpenAQStepFunction.Name
+        - GlueStartJobRunPolicy:
+            JobName: !Ref OpenAqEtlJob
+
+Outputs:
+  MainStateMachineArn:
+    Description: "ARN de la máquina de estados principal"
+    Value: !Ref MainStateMachine
