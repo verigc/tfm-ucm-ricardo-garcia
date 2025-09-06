@@ -5,7 +5,7 @@ Description: >
   Este template define la máquina de estados, las funciones Lambda y el job de Glue necesarios.
 
 Parameters:
-  S3BucketName: s3://tfm-ucm
+  S3BucketName: 
     Type: String
     Description: Nombre del bucket S3 donde se almacenarán los datos crudos y procesados.
 
