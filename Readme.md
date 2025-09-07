@@ -39,12 +39,19 @@ git clone https://github.com/verigc/tfm-ucm-ricardo-garcia.git
 cd tfm-ucm-ricardo-garcia
 ```
 
-2. Construir el Proyecto
+2. Crear Bucket en s3 y subir script de glue (Cambiar el nombre del bucket y la region si lo desea)  
+
+```
+aws s3 mb s3://tfm-ucm-dev-ricardo-garcia --region us-east-1
+aws s3 cp ./glue_scripts/OpenAQ_ETL.py s3://tfm-ucm-dev-ricardo-garcia/glue_scripts/
+```
+
+3. Construir el Proyecto
 Este comando preparará los artefactos de la aplicación, instalará las dependencias de cada función Lambda y las dejará listas para ser empaquetadas.
 ```
 sam build  
 ```
-3. Desplegar la Aplicación
+4. Desplegar la Aplicación
 Este es el comando principal que creará todos los recursos en la nube. Usaremos el modo guiado (--guided) para que el proceso sea más sencillo. La primera vez que lo ejecutes, te hará una serie de preguntas para configurar el despliegue.
 
 ```

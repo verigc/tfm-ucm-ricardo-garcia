@@ -12,7 +12,7 @@ Resources:
             Resource: arn:aws:states:::lambda:invoke
             Output: '{% $states.result.Payload %}'
             Arguments:
-              FunctionName: ${lambdainvoke_FunctionName_da2c6513}
+              FunctionName: ${LambdaGetHealthDataArn}
               Payload: '{% $states.input %}'
             Retry:
               - ErrorEquals:
@@ -30,7 +30,7 @@ Resources:
             Resource: arn:aws:states:::lambda:invoke
             Output: '{% $states.result.Payload %}'
             Arguments:
-              FunctionName: ${lambdainvoke_FunctionName_41498395}
+              FunctionName: ${LambdaGetReeDataArn}
               Payload: '{% $states.input %}'
             Retry:
               - ErrorEquals:
@@ -48,7 +48,7 @@ Resources:
             Resource: arn:aws:states:::lambda:invoke
             Output: '{% $states.result.Payload %}'
             Arguments:
-              FunctionName: ${lambdainvoke_FunctionName_23e55163}
+              FunctionName: ${LambdaGetOpenAqSensorsArn}
               Payload: '{% $states.input %}'
             Retry:
               - ErrorEquals:
@@ -66,7 +66,7 @@ Resources:
             Resource: arn:aws:states:::lambda:invoke
             Output: '{% $states.result.Payload %}'
             Arguments:
-              FunctionName: ${lambdainvoke_FunctionName_3355674c}
+              FunctionName: ${LambdaDividirSensoresEnLotesArn}
               Payload: '{% $states.input %}'
             Retry:
               - ErrorEquals:
@@ -90,7 +90,7 @@ Resources:
                   Type: Task
                   Resource: arn:aws:states:::states:startExecution.sync:2
                   Arguments:
-                    StateMachineArn: ${statesstartExecution_StateMachineArn_9f9859de}
+                    StateMachineArn: ${StateMachineOpenAQA Arn}
                     Input: '{% $states.input %}'
                   End: true
             MaxConcurrency: 1
@@ -99,7 +99,7 @@ Resources:
             Type: Task
             Resource: arn:aws:states:::glue:startJobRun
             Arguments:
-              JobName: ${gluestartJobRun_JobName_5944c74e}
+              JobName: ${GlueJobName}
             End: true
         QueryLanguage: JSONata
       DefinitionSubstitutions:
