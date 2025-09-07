@@ -52,10 +52,11 @@ Este comando preparará los artefactos de la aplicación, instalará las depende
 sam build  
 ```
 4. Desplegar la Aplicación
-Este es el comando principal que creará todos los recursos en la nube. Usaremos el modo guiado (--guided) para que el proceso sea más sencillo. La primera vez que lo ejecutes, te hará una serie de preguntas para configurar el despliegue.
+Este es el comando principal que creará todos los recursos en la nube. Usaremos el modo guiado (--guided) para que el proceso sea más sencillo. La primera vez que lo ejecutes, te hará una serie de preguntas para configurar el despliegue, ademas indicar con el parametro 
+--s3-bucket, el nombre del bucket creado en el paso 2.
 
 ```
-sam deploy --guided  
+sam deploy --s3-bucket tfm-ucm-dev-ricardo-garcia --guided
 ```
 A continuación, se te pedirá que introduzcas los siguientes parámetros. Puedes aceptar los valores por defecto presionando Enter o especificarlos:
 
