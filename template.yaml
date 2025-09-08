@@ -8,6 +8,7 @@ Parameters:
   S3BucketName:
     Type: String
     Description: Nombre del bucket S3 único donde se almacenarán los datos y scripts.
+    Default: "tfm-ucm"
   SecretName:
     Type: String
     Default: "tfm-ucm"
@@ -72,6 +73,30 @@ Resources:
                   - glue:BatchCreatePartition
                   - glue:GetTable
                 Resource: "*" # Simplificado para el TFM, en producción se limitaría a ARNs específicos
+        - PolicyName: EventBridgeSyncPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - events:PutRule
+                  - events:PutTargets
+                  - events:DeleteRule
+                  - events:DescribeRule
+                Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/StepFunctions*"
+        - PolicyName: LambdaInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt GetHealthDataFunction.Arn
+                  - !GetAtt GetReeDataFunction.Arn
+                  - !GetAtt GetOpenAqSensorsFunction.Arn
+                  - !GetAtt GetOpenAqDataFunction.Arn
+                  - !GetAtt DividirSensoresEnLotesFunction.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess # Mantenido para el job de Glue
 

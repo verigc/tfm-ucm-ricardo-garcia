@@ -1,6 +1,6 @@
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  StateMachine9dc33bfc:
+  StateMachine85ffde05:
     Type: AWS::Serverless::StateMachine
     Properties:
       Definition:
@@ -19,7 +19,7 @@ Resources:
                   Resource: arn:aws:states:::lambda:invoke
                   Output: '{% $states.result.Payload %}'
                   Arguments:
-                    FunctionName: ${lambdainvoke_FunctionName_3b6f8908}
+                    FunctionName: ${lambdainvoke_FunctionName_e642879b}
                     Payload: '{% $states.input %}'
                   Retry:
                     - ErrorEquals:
@@ -36,13 +36,13 @@ Resources:
             MaxConcurrency: 1
         QueryLanguage: JSONata
       DefinitionSubstitutions:
-        lambdainvoke_FunctionName_3b6f8908: >-
+        lambdainvoke_FunctionName_e642879b: >-
           arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data:$LATEST
-      Name: StateMachine9dc33bfc
+      Name: StateMachine85ffde05
       Type: STANDARD
       Role:
         Fn::GetAtt:
-          - Role9df11950
+          - Roleb212254e
           - Arn
       Logging:
         Level: 'ALL'
@@ -51,12 +51,12 @@ Resources:
           - CloudWatchLogsLogGroup:
               LogGroupArn:
                 Fn::GetAtt:
-                  - LogGroup38c580ec
+                  - LogGroup8572f959
                   - Arn
-  Role9df11950:
+  Roleb212254e:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: StepFunctions_IAM_ROLE_OpenAQStepFunctionf0a2396e
+      RoleName: StepFunctions_IAM_ROLE_OpenAQStepFunction511b5e70
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -70,12 +70,12 @@ Resources:
       MaxSessionDuration: 3600
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
-  Policy610db110:
+  Policy0730d8c3:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: AWSLambdaBasicExecutionRole3a70b7de
+      PolicyName: AWSLambdaBasicExecutionRole9e1bcc18
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -89,12 +89,12 @@ Resources:
             Resource:
               - >-
                 arn:aws:logs:us-east-1:533267130424:log-group:/aws/lambda/read_csv_from_s3:*
-  Policy55758cb7:
+  Policy34921e2d:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: AWSLambdaS3ExecutionRole8400c6b1
+      PolicyName: AWSLambdaS3ExecutionRole63633d68
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -104,12 +104,12 @@ Resources:
               - s3:ListBucket
               - s3:ListAllMyBuckets
             Resource: arn:aws:s3:::*
-  Policy3db586c0:
+  Policy1abbb81d:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: AWSGlueConsoleRoleInlinePolicy111d273e
+      PolicyName: AWSGlueConsoleRoleInlinePolicyc06ff763
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -121,12 +121,12 @@ Resources:
             Resource:
               - arn:aws:s3:::tfm-ucm/*
               - arn:aws:s3:::tfm-ucm
-  Policy4a11b476:
+  Policye3ca0a40:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: GetSecretValuefa96952d
+      PolicyName: GetSecretValue44cb0be9
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -135,12 +135,12 @@ Resources:
               - secretsmanager:GetSecretValue
             Resource:
               - '*'
-  Policyc3f1fb0d:
+  Policy0c605399:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: glue_BatchCreatePartitionb33d13bc
+      PolicyName: glue_BatchCreatePartition31c542bd
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -153,12 +153,12 @@ Resources:
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
-  Policy69292b9e:
+  Policyfb79d06d:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: glue_GetTable09030c64
+      PolicyName: glue_GetTable92f38e71
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -171,12 +171,12 @@ Resources:
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
               - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
-  Policy49b3833b:
+  Policy0871f8fa:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: lambda_InvokeFunction0000f8af
+      PolicyName: lambda_InvokeFunction0a95040c
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -193,12 +193,12 @@ Resources:
               - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
               - >-
                 arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
-  Policycd78b3d7:
+  Policyc19de02f:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: logs67af4157
+      PolicyName: logsf0f21d37
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -216,12 +216,12 @@ Resources:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: '*'
-  Policy1bd8d81d:
+  Policy8f993bd9:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: read26567742
+      PolicyName: read86b58f1f
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -233,12 +233,12 @@ Resources:
               - s3:ListBucket
               - s3:DeleteObject
             Resource: arn:aws:s3:::tfm-ucm/*
-  Policyaff2ece5:
+  Policy1bceb13e:
     Type: AWS::IAM::RolePolicy
     Properties:
-      PolicyName: StepFunction2751f7ca
+      PolicyName: StepFunction0d6ec2bc
       RoleName:
-        Ref: Role9df11950
+        Ref: Roleb212254e
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -264,7 +264,7 @@ Resources:
               - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
               - >-
                 arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
-  LogGroup38c580ec:
+  LogGroup8572f959:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/vendedlogs/states/StateMachine9dc33bfc-Logs
+      LogGroupName: /aws/vendedlogs/states/StateMachine85ffde05-Logs

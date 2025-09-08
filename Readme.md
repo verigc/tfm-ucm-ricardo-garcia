@@ -60,15 +60,21 @@ sam deploy --s3-bucket tfm-ucm-dev-ricardo-garcia --guided
 ```
 A continuación, se te pedirá que introduzcas los siguientes parámetros. Puedes aceptar los valores por defecto presionando Enter o especificarlos:
 
-Stack Name: Un nombre para tu proyecto en AWS (ej: tfm-data-pipeline).
+- Stack Name: Un nombre para tu proyecto en AWS (ej: tfm-data-pipeline).
 
-AWS Region: La región donde quieres desplegar (ej: us-east-1).
+- AWS Region: La región donde quieres desplegar (ej: us-east-1).
 
-Confirm changes before deploy: Responde y (sí) para poder revisar los cambios.
+- Parameter S3BucketName: Nombre del bucket creado en el paso 2.
 
-Allow SAM CLI IAM role creation: Responde y para permitir que SAM cree los roles de permisos necesarios.
+- Parameter SecretName: Nombre del secreto (Dejar por defecto "tfm-ucm").
 
-Save arguments to samconfig.toml: Responde y para guardar tus respuestas. Así, las próximas veces que ejecutes sam deploy, no tendrás que volver a introducirlas.
+- Confirm changes before deploy: Responde y (sí) para poder revisar los cambios.
+
+- Allow SAM CLI IAM role creation: Responde y para permitir que SAM cree los roles de permisos necesarios.
+
+- Disable rollback [y/N]: Responde y (Si) si quieres que en caso de fallo se haga el rollback automaticamente.
+
+- Save arguments to samconfig.toml: Responde y para guardar tus respuestas. Así, las próximas veces que ejecutes sam deploy, no tendrás que volver a introducirlas.
 
 El proceso de despliegue tardará unos minutos. Una vez finalizado, todos los recursos estarán creados y activos en tu cuenta de AWS.
 
