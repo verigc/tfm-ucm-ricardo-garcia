@@ -85,7 +85,7 @@ Para comprobar que el despliegue ha sido exitoso:
 
 - Navega al servicio Secret Manager y edita el secreto que hayas creado en el deploy con la siguiente estructura:
     
-    {"openaq":"openaq_api_key","inclasns":"inclasns_api_key"}
+    {"openaq":"COLOCA_AQUI_LA_API_OBTENIDA_EN_OPENAQ","inclasns":"COLOCA_AQUI_LA_API_OBTENIDA_EN_INCLASNS"}
 
 - Navega al servicio Step Functions.
 
