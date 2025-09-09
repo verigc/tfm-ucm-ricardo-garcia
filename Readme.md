@@ -85,7 +85,7 @@ Para comprobar que el despliegue ha sido exitoso:
 
 - Navega al servicio Secret Manager y edita el secreto que hayas creado en el deploy con la siguiente estructura:
     
-    {"openaq":"COLOCA_AQUI_LA_API_OBTENIDA_EN_OPENAQ","inclasns":"COLOCA_AQUI_LA_API_OBTENIDA_EN_INCLASNS"}
+    {"openaq":"COLOCA_AQUI_LA_APIKEY_OBTENIDA_EN_OPENAQ","inclasns":"COLOCA_AQUI_LA_APIKEY_OBTENIDA_EN_INCLASNS"}
 
 - Navega al servicio Step Functions.
 
@@ -93,11 +93,10 @@ Deberías ver una nueva máquina de estados llamada MiPipelinePrincipal (o el no
 
 Puedes iniciar una ejecución manual para probar el pipeline de extremo a extremo.
 
-Limpieza (Destrucción de Recursos)
+## Limpieza (Destrucción de Recursos)
 Para eliminar todos los recursos creados por este proyecto y evitar costes inesperados, puedes eliminar el "stack" completo ejecutando el siguiente comando:
 
-
-### Reemplaza 'tfm-data-pipeline' con el nombre que le diste al Stack Name
+Reemplaza 'tfm-data-pipeline' con el nombre que le diste al Stack Name
 ```
 sam delete --stack-name tfm-data-pipeline
 ```
