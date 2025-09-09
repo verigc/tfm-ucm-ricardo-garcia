@@ -8,7 +8,6 @@ Parameters:
   S3BucketName:
     Type: String
     Description: Nombre del bucket S3 único donde se almacenarán los datos y scripts.
-    Default: "tfm-ucm"
   SecretName:
     Type: String
     Default: "tfm-ucm"
@@ -63,7 +62,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: !Ref TfmUcmSecret
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretName}-*"
         - PolicyName: GlueCatalogAndTablePolicy
           PolicyDocument:
             Version: '2012-10-17'
@@ -84,19 +83,7 @@ Resources:
                   - events:DeleteRule
                   - events:DescribeRule
                 Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/StepFunctions*"
-        - PolicyName: LambdaInvokePolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - lambda:InvokeFunction
-                Resource:
-                  - !GetAtt GetHealthDataFunction.Arn
-                  - !GetAtt GetReeDataFunction.Arn
-                  - !GetAtt GetOpenAqSensorsFunction.Arn
-                  - !GetAtt GetOpenAqDataFunction.Arn
-                  - !GetAtt DividirSensoresEnLotesFunction.Arn
+
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess # Mantenido para el job de Glue
 
@@ -234,6 +221,25 @@ Resources:
         StateMachineOpenAQA Arn: !Ref OpenAQStepFunction
         GlueJobName: !Ref OpenAqEtlJob
       Role: !GetAtt TfmUnifiedRole.Arn
+      
+  LambdaInvokePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: TfmLambdaInvokePolicy
+      Roles: 
+        - !Ref TfmUnifiedRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource:
+              - !GetAtt GetHealthDataFunction.Arn
+              - !GetAtt GetReeDataFunction.Arn
+              - !GetAtt GetOpenAqSensorsFunction.Arn
+              - !GetAtt GetOpenAqDataFunction.Arn
+              - !GetAtt DividirSensoresEnLotesFunction.Arn
 
 Outputs:
   MainStateMachineArn:

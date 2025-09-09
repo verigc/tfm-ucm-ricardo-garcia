@@ -78,12 +78,16 @@ A continuación, se te pedirá que introduzcas los siguientes parámetros. Puede
 
 El proceso de despliegue tardará unos minutos. Una vez finalizado, todos los recursos estarán creados y activos en tu cuenta de AWS.
 
-Validación
+## Validación
 Para comprobar que el despliegue ha sido exitoso:
 
-Inicia sesión en la consola de AWS.
+- Inicia sesión en la consola de AWS.
 
-Navega al servicio Step Functions.
+- Navega al servicio Secret Manager y edita el secreto que hayas creado en el deploy con la siguiente estructura:
+    
+    {"openaq":"openaq_api_key","inclasns":"inclasns_api_key"}
+
+- Navega al servicio Step Functions.
 
 Deberías ver una nueva máquina de estados llamada MiPipelinePrincipal (o el nombre que le hayas dado).
 
@@ -92,7 +96,8 @@ Puedes iniciar una ejecución manual para probar el pipeline de extremo a extrem
 Limpieza (Destrucción de Recursos)
 Para eliminar todos los recursos creados por este proyecto y evitar costes inesperados, puedes eliminar el "stack" completo ejecutando el siguiente comando:
 
-Bash
 
-# Reemplaza 'tfm-data-pipeline' con el nombre que le diste al Stack Name
+### Reemplaza 'tfm-data-pipeline' con el nombre que le diste al Stack Name
+```
 sam delete --stack-name tfm-data-pipeline
+```
