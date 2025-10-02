@@ -1,0 +1,43 @@
+name: Deploy SAM Application to AWS
+
+on:
+  push:
+    branches:
+      - main # O la rama que uses para despliegue
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Esto es CRÍTICO: Permite que el workflow solicite un token OIDC
+      contents: read # Permite leer el código del repositorio
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::398230401234:role/github-actions-sam-deploy-role # ¡Reemplaza con el ARN de tu rol!
+          aws-region: us-east-1 # ¡Reemplaza con tu región de AWS!
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Asegúrate de que coincida con tu Lambda
+
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: Build SAM application
+        run: sam build --use-container # Puedes usar --use-container si tienes dependencias nativas o para mayor aislamiento
+
+      - name: Deploy SAM application
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name MiProyectoSamStack --s3-bucket tfm-ucm-artefactos --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+        # env:
+          # Si tienes variables de entorno en tu template.yaml o quieres pasarlas
+          # Puedes definirlas aquí o como secretos de GitHub si son sensibles
+          # EJEMPLO_VARIABLE: ${{ secrets.MI_SECRETO }}
+          # O puedes referenciarlas en la CLI de sam deploy con --parameter-overrides
+        

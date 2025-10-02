@@ -1,7 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: |
-  TFM - Pipeline de datos serverless para la ingesta y procesamiento de datos públicos. Versión final que combina la estructura SAM con la configuración detallada de los recursos desplegados.
+Description: >
+  TFM - Pipeline de datos serverless para la ingesta y procesamiento de datos públicos.
+  Versión final que combina la estructura SAM con la configuración detallada de los recursos desplegados.
 
 Parameters:
   S3BucketName:
@@ -9,7 +10,7 @@ Parameters:
     Description: Nombre del bucket S3 único donde se almacenarán los datos y scripts.
   SecretName:
     Type: String
-    Default: tfm-ucm
+    Default: "tfm-ucm"
     Description: Nombre del secreto en AWS Secrets Manager que contiene las API keys.
 
 Resources:
@@ -42,9 +43,9 @@ Resources:
                   - s3:PutObject
                   - s3:DeleteObject
                   - s3:ListBucket
-                Resource:
-                  - !Sub arn:aws:s3:::${S3BucketName}
-                  - !Sub arn:aws:s3:::${S3BucketName}/*
+                Resource: 
+                  - !Sub "arn:aws:s3:::${S3BucketName}"
+                  - !Sub "arn:aws:s3:::${S3BucketName}/*"
         - PolicyName: CloudWatchLogsPolicy
           PolicyDocument:
             Version: '2012-10-17'
@@ -54,14 +55,14 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
+                Resource: "arn:aws:logs:*:*:*"
         - PolicyName: SecretsManagerPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretName}-*
+                Resource: !Ref TfmUcmSecret
         - PolicyName: GlueCatalogAndTablePolicy
           PolicyDocument:
             Version: '2012-10-17'
@@ -70,7 +71,7 @@ Resources:
                 Action:
                   - glue:BatchCreatePartition
                   - glue:GetTable
-                Resource: '*' # Simplificado para el TFM, en producción se limitaría a ARNs específicos
+                Resource: "*" # Simplificado para el TFM, en producción se limitaría a ARNs específicos
         - PolicyName: EventBridgeSyncPolicy
           PolicyDocument:
             Version: '2012-10-17'
@@ -81,7 +82,7 @@ Resources:
                   - events:PutTargets
                   - events:DeleteRule
                   - events:DescribeRule
-                Resource: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/StepFunctions*
+                Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/StepFunctions*"
 
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess # Mantenido para el job de Glue
@@ -101,9 +102,9 @@ Resources:
       Role: !GetAtt TfmUnifiedRole.Arn
       Environment:
         Variables:
-          bucket_name: !Sub s3://${S3BucketName}
+          bucket_name: !Sub "s3://${S3BucketName}"
       Layers:
-        - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25
+        - "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25"
 
   GetReeDataFunction:
     Type: AWS::Serverless::Function
@@ -117,13 +118,13 @@ Resources:
       Role: !GetAtt TfmUnifiedRole.Arn
       Environment:
         Variables:
-          time_trunc: day
-          uri_definition: /es/datos/demanda/evolucion
-          fecha_ini: 2024-01-01T00:00
-          fecha_fin: 2025-07-31T23:59
+          time_trunc: "day"
+          uri_definition: "/es/datos/demanda/evolucion"
+          fecha_ini: "2024-01-01T00:00"
+          fecha_fin: "2025-07-31T23:59"
           bucket_name: !Ref S3BucketName
       Layers:
-        - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25
+        - "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25"
 
   GetOpenAqSensorsFunction:
     Type: AWS::Serverless::Function
@@ -137,11 +138,11 @@ Resources:
       Role: !GetAtt TfmUnifiedRole.Arn
       Environment:
         Variables:
-          country_code: ES
-          bucket_name: !Sub s3://${S3BucketName}
-          start_date: '2024-01-01T00:00:00Z'
+          country_code: "ES"
+          bucket_name: !Sub "s3://${S3BucketName}"
+          start_date: "2024-01-01T00:00:00Z"
       Layers:
-        - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25
+        - "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python310:25"
 
   GetOpenAqDataFunction:
     Type: AWS::Serverless::Function
@@ -155,12 +156,12 @@ Resources:
       Role: !GetAtt TfmUnifiedRole.Arn
       Environment:
         Variables:
-          country_code: ES
-          bucket_name: !Sub s3://${S3BucketName}
-          start_date: '2024-01-01T00:00:00Z'
+          country_code: "ES"
+          bucket_name: !Sub "s3://${S3BucketName}"
+          start_date: "2024-01-01T00:00:00Z"
       Layers:
-        - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python311:22
-
+        - "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python311:22"
+  
   DividirSensoresEnLotesFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -183,8 +184,8 @@ Resources:
       Command:
         Name: glueetl
         PythonVersion: '3'
-        ScriptLocation: !Sub s3://${S3BucketName}/glue_scripts/OpenAQ_ETL.py
-      GlueVersion: '3.0'
+        ScriptLocation: !Sub "s3://${S3BucketName}/glue_scripts/OpenAQ_ETL.py"
+      GlueVersion: "3.0"
 
   # ================================================================================= #
   #                             Recursos Adicionales                                  #
@@ -193,7 +194,7 @@ Resources:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: !Ref SecretName
-      Description: Secreto para almacenar API keys del TFM UCM.
+      Description: "Secreto para almacenar API keys del TFM UCM."
 
   # ================================================================================= #
   #                             Máquinas de Estados                                   #
@@ -202,15 +203,16 @@ Resources:
     Type: AWS::Serverless::StateMachine
     Properties:
       Name: OpenAQStepFunction
+      DefinitionUri: step_function_definition/maquinaTrabajadora.yaml # O .json, ajusta la extensión
       DefinitionSubstitutions:
         LambdaGetOpenAqDataArn: !GetAtt GetOpenAqDataFunction.Arn
       Role: !GetAtt TfmUnifiedRole.Arn
-      DefinitionUri: step_function_definition/maquinaTrabajadora.yaml # O .json, ajusta la extensión
 
   MainStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       Name: ProcesarTodosLosSensores-Orchestrator
+      DefinitionUri: step_function_definition/maquinaOrquestadora.yaml # O .json, ajusta la extensión
       DefinitionSubstitutions:
         LambdaGetHealthDataArn: !GetAtt GetHealthDataFunction.Arn
         LambdaGetReeDataArn: !GetAtt GetReeDataFunction.Arn
@@ -219,31 +221,11 @@ Resources:
         StateMachineOpenAQA Arn: !Ref OpenAQStepFunction
         GlueJobName: !Ref OpenAqEtlJob
       Role: !GetAtt TfmUnifiedRole.Arn
-      DefinitionUri: step_function_definition/maquinaOrquestadora.yaml # O .json, ajusta la extensión
-
-  LambdaInvokePolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: TfmLambdaInvokePolicy
-      Roles:
-        - !Ref TfmUnifiedRole
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - lambda:InvokeFunction
-            Resource:
-              - !GetAtt GetHealthDataFunction.Arn
-              - !GetAtt GetReeDataFunction.Arn
-              - !GetAtt GetOpenAqSensorsFunction.Arn
-              - !GetAtt GetOpenAqDataFunction.Arn
-              - !GetAtt DividirSensoresEnLotesFunction.Arn
 
 Outputs:
   MainStateMachineArn:
-    Description: ARN de la máquina de estados principal
+    Description: "ARN de la máquina de estados principal"
     Value: !Ref MainStateMachine
   OpenAQStepFunctionArn:
-    Description: ARN de la máquina de estados trabajadora
+    Description: "ARN de la máquina de estados trabajadora"
     Value: !Ref OpenAQStepFunction
