@@ -3,7 +3,7 @@ name: Deploy SAM Application to AWS
 on:
   push:
     branches:
-      - main # O la rama que uses para despliegue
+      - master # O la rama que uses para despliegue
 
 jobs:
   deploy:
