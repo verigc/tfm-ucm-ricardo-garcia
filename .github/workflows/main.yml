@@ -34,11 +34,13 @@ jobs:
         run: sam build --use-container # Puedes usar --use-container si tienes dependencias nativas o para mayor aislamiento
 
       - name: Deploy SAM application
-        run: sam deploy \ 
-          --no-confirm-changeset \ 
+        run: |
+          sam deploy \
+          --no-confirm-changeset \
           --no-fail-on-empty-changeset \
           --stack-name MiProyectoSamStack \
-          --region us-s3-bucket tfm-ucm-artefactos \
+          --region us-east-1 \
+          --s3-bucket tfm-ucm-artefactos \
           --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
           --parameter-overrides S3BucketName=tfm-ucm-artefactos
         # env:
