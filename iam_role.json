@@ -1,0 +1,118 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"cloudformation:CreateStack",
+				"cloudformation:DeleteStack",
+				"cloudformation:UpdateStack",
+				"cloudformation:DescribeStacks",
+				"cloudformation:DescribeStackEvents",
+				"cloudformation:ValidateTemplate"
+			],
+			"Resource": "arn:aws:cloudformation:us-east-1:398230401234:stack/tfm-ucm-stack/*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:GetObjectVersion",
+				"s3:GetBucketAcl",
+				"s3:GetBucketLocation"
+			],
+			"Resource": [
+				"arn:aws:s3:::tfm-ucm-artefactos/*",
+				"arn:aws:s3:::tfm-ucm-artefactos"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"secretsmanager:CreateSecret",
+				"secretsmanager:DeleteSecret",
+				"secretsmanager:UpdateSecret",
+				"secretsmanager:DescribeSecret",
+				"secretsmanager:GetSecretValue",
+				"secretsmanager:TagResource",
+				"secretsmanager:UntagResource"
+			],
+			"Resource": "arn:aws:secretsmanager:us-east-1:398230401234:secret:tfm-ucm-*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"lambda:CreateFunction",
+				"lambda:DeleteFunction",
+				"lambda:InvokeFunction",
+				"lambda:UpdateFunctionConfiguration",
+				"lambda:UpdateFunctionCode",
+				"lambda:GetFunction",
+				"lambda:GetFunctionConfiguration",
+				"lambda:AddPermission",
+				"lambda:RemovePermission"
+			],
+			"Resource": "arn:aws:lambda:us-east-1:398230401234:function:tfm-ucm-stack-*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"states:CreateStateMachine",
+				"states:DeleteStateMachine",
+				"states:UpdateStateMachine",
+				"states:DescribeStateMachine",
+				"states:StartExecution",
+				"states:StopExecution"
+			],
+			"Resource": "arn:aws:states:us-east-1:398230401234:stateMachine:tfm-ucm-stack-*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"apigateway:*"
+			],
+			"Resource": "arn:aws:apigateway:us-east-1::/restapis/*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"iam:CreateRole",
+				"iam:DeleteRole",
+				"iam:GetRole",
+				"iam:AttachRolePolicy",
+				"iam:DetachRolePolicy",
+				"iam:PutRolePolicy",
+				"iam:DeleteRolePolicy",
+				"iam:ListAttachedRolePolicies",
+				"iam:ListRolePolicies",
+				"iam:TagRole"
+			],
+			"Resource": "arn:aws:iam::398230401234:role/tfm-ucm-stack-TfmUnifiedRole-*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "iam:PassRole",
+			"Resource": "arn:aws:iam::398230401234:role/tfm-ucm-stack-TfmUnifiedRole-*",
+			"Condition": {
+				"StringEquals": {
+					"iam:PassedToService": [
+						"lambda.amazonaws.com",
+						"states.amazonaws.com",
+						"edgelambda.amazonaws.com",
+						"glue.amazonaws.com"
+					]
+				}
+			}
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+			],
+			"Resource": "arn:aws:logs:us-east-1:398230401234:log-group:/aws/lambda/tfm-ucm-stack-*:*"
+		}
+	]
+}
