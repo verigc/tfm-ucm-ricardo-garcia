@@ -38,7 +38,7 @@ jobs:
           sam deploy \
           --no-confirm-changeset \
           --no-fail-on-empty-changeset \
-          --stack-name MiProyectoSamStack \
+          --stack-name tfm-ucm-stack \
           --region us-east-1 \
           --s3-bucket tfm-ucm-artefactos \
           --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
