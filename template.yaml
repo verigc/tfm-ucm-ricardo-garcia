@@ -94,7 +94,7 @@ Resources:
     Properties:
       FunctionName: getHealthData
       CodeUri: lambda_functions/getHealthData/
-      Handler: lambda_function.lambda_handler # Ajusta si tu archivo o función se llama diferente
+      Handler: getHealthData.lambda_handler # Ajusta si tu archivo o función se llama diferente
       Runtime: python3.10
       MemorySize: 512
       Timeout: 60
@@ -110,7 +110,7 @@ Resources:
     Properties:
       FunctionName: get_ree_data
       CodeUri: lambda_functions/get_ree_data/
-      Handler: lambda_function.lambda_handler
+      Handler: get_ree_data.lambda_handler
       Runtime: python3.10
       MemorySize: 256
       Timeout: 60
@@ -130,7 +130,7 @@ Resources:
     Properties:
       FunctionName: get_openaq_sensors
       CodeUri: lambda_functions/get_openaq_sensors/
-      Handler: lambda_function.lambda_handler
+      Handler: get_openaq_sensors.lambda_handler
       Runtime: python3.10
       MemorySize: 255
       Timeout: 60
@@ -148,7 +148,7 @@ Resources:
     Properties:
       FunctionName: get_open_aq_data
       CodeUri: lambda_functions/get_open_aq_data/
-      Handler: lambda_function.lambda_handler
+      Handler: get_open_aq_data.lambda_handler
       Runtime: python3.11
       MemorySize: 512
       Timeout: 120
@@ -166,7 +166,7 @@ Resources:
     Properties:
       FunctionName: DividirSensoresEnLotes
       CodeUri: lambda_functions/DividirSensoresEnLotes/
-      Handler: lambda_function.lambda_handler
+      Handler: DividirSensoresEnLotes.lambda_handler
       Runtime: python3.10
       MemorySize: 128
       Timeout: 3
