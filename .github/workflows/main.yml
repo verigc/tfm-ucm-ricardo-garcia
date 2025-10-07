@@ -34,7 +34,13 @@ jobs:
         run: sam build --use-container # Puedes usar --use-container si tienes dependencias nativas o para mayor aislamiento
 
       - name: Deploy SAM application
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name MiProyectoSamStack --s3-bucket tfm-ucm-artefactos --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+        run: sam deploy \ 
+          --no-confirm-changeset \ 
+          --no-fail-on-empty-changeset \
+          --stack-name MiProyectoSamStack \
+          --region us-s3-bucket tfm-ucm-artefactos \
+          --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+          --parameter-overrides S3BucketName=tfm-ucm-artefactos
         # env:
           # Si tienes variables de entorno en tu template.yaml o quieres pasarlas
           # Puedes definirlas aquí o como secretos de GitHub si son sensibles
