@@ -68,7 +68,7 @@ def lambda_handler(event, context):
             # Siguiente bloque: primer día del siguiente año
             actual_inicio = datetime(actual_inicio.year + 1, 1, 1)
     else:
-        bloques.append((fecha_inicio, fecha_fin))
+        bloques.append((fecha_ini, fecha_fin))
 
     all_data = {}
     for inicio, fin in bloques:

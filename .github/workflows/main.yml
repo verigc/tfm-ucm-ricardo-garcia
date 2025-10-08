@@ -27,6 +27,20 @@ jobs:
         with:
           python-version: '3.11' # Asegúrate de que coincida con tu Lambda
 
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      # === CI COMPONENTE 1: LINTING (Verificación de Estilo y Sintaxis) ===
+      - name: Run Flake8 Linting
+        run: |
+          # El 'pip install flake8' es redundante si está en requirements.txt, pero asegura que esté disponible
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+      # === CI COMPONENTE 2: UNIT TESTS (Pruebas de Lógica) ===
+      - name: Run Pytest Unit Tests
+        run: |
+          pytest tests/ # Ejecuta las pruebas en la carpeta 'tests/'
+
       - name: Install SAM CLI
         run: pip install aws-sam-cli
 

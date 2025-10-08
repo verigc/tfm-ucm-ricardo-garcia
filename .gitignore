@@ -20,3 +20,10 @@ Thumbs.db
 # Archivos de IDEs
 .vscode/
 .idea/
+
+# Archivos de cache de pruebas
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyc
+
