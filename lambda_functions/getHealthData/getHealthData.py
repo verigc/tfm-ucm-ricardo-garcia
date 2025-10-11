@@ -101,7 +101,7 @@ def put_s3_object(s3_path, df, partition_cols=None, prefix=None):
 # --- Función Handler para AWS Lambda ---
 def lambda_handler(event, context):
 
-    CLAVE_API = get_secret('tfm-ucm-dev').get('inclasns')
+    CLAVE_API = get_secret('tfm-ucm').get('inclasns')
     bucket_name = os.getenv('bucket_name')
     print(f'Bucket: {bucket_name}')
     

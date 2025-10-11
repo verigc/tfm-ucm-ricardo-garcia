@@ -82,5 +82,3 @@ Bash
 
 # Reemplaza 'tfm-data-pipeline' con el nombre que le diste al Stack Name
 sam delete --stack-name tfm-data-pipeline
-
-# Hello from Lambda and GitHub Actions! 3

@@ -40,7 +40,7 @@ def make_api_request(url, params, max_retries=5, initial_delay=1):
     """
     Realiza una solicitud a la API con manejo de reintentos y límites de tasa.
     """
-    CLAVE_API = get_secret('tfm-ucm-dev').get('openaq')
+    CLAVE_API = get_secret('tfm-ucm').get('openaq')
     headers = {'X-API-Key': CLAVE_API,
         'accept': 'application/json',
         'content-type': 'application/json'}

@@ -1,95 +1,331 @@
-Comment: "Orquestador principal para la ingesta de datos de TFM UCM"
-StartAt: getHealthData
-States:
-  getHealthData:
-    Type: Task
-    Resource: "arn:aws:states:::lambda:invoke"
-    Parameters:
-      FunctionName: "${LambdaGetHealthDataArn}"
-      Payload:
-        "$": "$"
-    Retry:
-      - ErrorEquals:
-          - "Lambda.ServiceException"
-          - "Lambda.AWSLambdaException"
-          - "Lambda.SdkClientException"
-        IntervalSeconds: 2
-        MaxAttempts: 3
-        BackoffRate: 2
-    Next: get_ree_data
-
-  get_ree_data:
-    Type: Task
-    Resource: "arn:aws:states:::lambda:invoke"
-    Parameters:
-      FunctionName: "${LambdaGetReeDataArn}"
-      Payload:
-        "$": "$"
-    Retry:
-      - ErrorEquals:
-          - "Lambda.ServiceException"
-          - "Lambda.AWSLambdaException"
-          - "Lambda.SdkClientException"
-        IntervalSeconds: 2
-        MaxAttempts: 3
-        BackoffRate: 2
-    Next: Obtener lista de sensores
-
-  Obtener lista de sensores:
-    Type: Task
-    Resource: "arn:aws:states:::lambda:invoke"
-    Parameters:
-      FunctionName: "${LambdaGetOpenAqSensorsArn}"
-      Payload:
-        "$": "$"
-    Retry:
-      - ErrorEquals:
-          - "Lambda.ServiceException"
-          - "Lambda.AWSLambdaException"
-          - "Lambda.SdkClientException"
-        IntervalSeconds: 2
-        MaxAttempts: 3
-        BackoffRate: 2
-    Next: DividirSensoresEnLotes
-
-  DividirSensoresEnLotes:
-    Type: Task
-    Resource: "arn:aws:states:::lambda:invoke"
-    Parameters:
-      FunctionName: "${LambdaDividirSensoresEnLotesArn}"
-      Payload:
-        "$": "$"
-    Retry:
-      - ErrorEquals:
-          - "Lambda.ServiceException"
-          - "Lambda.AWSLambdaException"
-          - "Lambda.SdkClientException"
-        IntervalSeconds: 2
-        MaxAttempts: 3
-        BackoffRate: 2
-    Next: Map
-
-  Map:
-    Type: Map
-    ItemProcessor:
-      ProcessorConfig:
-        Mode: INLINE
-      StartAt: OpenAQStepFunction
-      States:
-        OpenAQStepFunction:
-          Type: Task
-          Resource: "arn:aws:states:::states:startExecution.sync:2"
-          Parameters:
-            StateMachineArn: "${StateMachineOpenAQA Arn}"
-            Input:
-              "$": "$"
-          End: true
-    MaxConcurrency: 1
-    Next: Datalake
-
-  Datalake:
-    Type: Task
-    Resource: "arn:aws:states:::glue:startJobRun.sync" # Usamos .sync para esperar a que termine
-    Parameters:
-      JobName: "${GlueJobName}"
-    End: true
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  StateMachine1d27bb5c:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Definition:
+        Comment: A description of my state machine
+        StartAt: getHealthData
+        States:
+          getHealthData:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Output: '{% $states.result.Payload %}'
+            Arguments:
+              FunctionName: ${lambdainvoke_FunctionName_da2c6513}
+              Payload: '{% $states.input %}'
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 1
+                MaxAttempts: 3
+                BackoffRate: 2
+                JitterStrategy: FULL
+            Next: get_ree_data
+          get_ree_data:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Output: '{% $states.result.Payload %}'
+            Arguments:
+              FunctionName: ${lambdainvoke_FunctionName_41498395}
+              Payload: '{% $states.input %}'
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 1
+                MaxAttempts: 3
+                BackoffRate: 2
+                JitterStrategy: FULL
+            Next: Obtener lista de sensores
+          Obtener lista de sensores:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Output: '{% $states.result.Payload %}'
+            Arguments:
+              FunctionName: ${lambdainvoke_FunctionName_23e55163}
+              Payload: '{% $states.input %}'
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 1
+                MaxAttempts: 3
+                BackoffRate: 2
+                JitterStrategy: FULL
+            Next: DividirSensoresEnLotes
+          DividirSensoresEnLotes:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Output: '{% $states.result.Payload %}'
+            Arguments:
+              FunctionName: ${lambdainvoke_FunctionName_3355674c}
+              Payload: '{% $states.input %}'
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 1
+                MaxAttempts: 3
+                BackoffRate: 2
+                JitterStrategy: FULL
+            Next: Map
+          Map:
+            Type: Map
+            ItemProcessor:
+              ProcessorConfig:
+                Mode: INLINE
+              StartAt: OpenAQStepFunction
+              States:
+                OpenAQStepFunction:
+                  Type: Task
+                  Resource: arn:aws:states:::states:startExecution.sync:2
+                  Arguments:
+                    StateMachineArn: ${statesstartExecution_StateMachineArn_9f9859de}
+                    Input: '{% $states.input %}'
+                  End: true
+            MaxConcurrency: 1
+            Next: Datalake
+          Datalake:
+            Type: Task
+            Resource: arn:aws:states:::glue:startJobRun
+            Arguments:
+              JobName: ${gluestartJobRun_JobName_5944c74e}
+            End: true
+        QueryLanguage: JSONata
+      DefinitionSubstitutions:
+        lambdainvoke_FunctionName_da2c6513: arn:aws:lambda:us-east-1:533267130424:function:getHealthData
+        lambdainvoke_FunctionName_41498395: arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
+        lambdainvoke_FunctionName_23e55163: arn:aws:lambda:us-east-1:533267130424:function:get_openaq_sensors
+        lambdainvoke_FunctionName_3355674c: arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
+        statesstartExecution_StateMachineArn_9f9859de: arn:aws:states:us-east-1:533267130424:stateMachine:OpenAQStepFunction
+        gluestartJobRun_JobName_5944c74e: OpenAQ_ETL
+      Name: StateMachine1d27bb5c
+      Type: STANDARD
+      Role:
+        Fn::GetAtt:
+          - Rolef25c0fea
+          - Arn
+      Logging:
+        Level: 'OFF'
+        IncludeExecutionData: false
+  Rolef25c0fea:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: StepFunctions_IAM_ROLE_ProcesarTodosLosSensores-Orchest9a32fe41
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+                - events.amazonaws.com
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
+  Policy163e806b:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSLambdaBasicExecutionRole2c9ef7e8
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: arn:aws:logs:us-east-1:533267130424:*
+          - Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - >-
+                arn:aws:logs:us-east-1:533267130424:log-group:/aws/lambda/read_csv_from_s3:*
+  Policy0eb29c05:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSLambdaS3ExecutionRole4d04ab01
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListAllMyBuckets
+            Resource: arn:aws:s3:::*
+  Policy117175a3:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSGlueConsoleRoleInlinePolicy21ddfc91
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:PutObject
+            Resource:
+              - arn:aws:s3:::tfm-ucm/*
+              - arn:aws:s3:::tfm-ucm
+  Policy3a0fb4e5:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: GetSecretValue5646422b
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - '*'
+  Policyba3c10f1:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: glue_BatchCreatePartitiond8ea8161
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - glue:BatchCreatePartition
+            Resource:
+              - arn:aws:glue:us-east-1:533267130424:catalog
+              - arn:aws:glue:us-east-1:533267130424:database/tfm-ucm
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
+  Policye9f229de:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: glue_GetTable3835689a
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - glue:GetTable
+            Resource:
+              - arn:aws:glue:us-east-1:533267130424:catalog
+              - arn:aws:glue:us-east-1:533267130424:database/tfm-ucm
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
+  Policyfb449a62:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: lambda_InvokeFunction0ab8293c
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource:
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:get_openaq_sensors
+              - arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data:$LATEST
+              - arn:aws:lambda:us-east-1:533267130424:function:getHealthData
+              - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
+  Policyc9ebc7b1:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: logs50d2a6d7
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogDelivery
+              - logs:GetLogDelivery
+              - logs:UpdateLogDelivery
+              - logs:DeleteLogDelivery
+              - logs:ListLogDeliveries
+              - logs:PutResourcePolicy
+              - logs:DescribeResourcePolicies
+              - logs:DescribeLogGroups
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: '*'
+  Policya3000a5a:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: read5e27edf2
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:DeleteObject
+            Resource: arn:aws:s3:::tfm-ucm/*
+  Policy4603b4bd:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: StepFunctioncb73e204
+      RoleName:
+        Ref: Rolef25c0fea
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+              - states:RedriveExecution
+              - states:DescribeExecution
+              - states:StartExecution
+              - states:StopExecution
+              - events:PutTargets
+              - events:PutRule
+              - events:DescribeRule
+            Resource:
+              - arn:aws:states:*:533267130424:express:*:*:*
+              - arn:aws:states:*:533267130424:stateMachine:*
+              - arn:aws:states:*:533267130424:execution:*:*
+              - >-
+                arn:aws:states:us-east-1:533267130424:stateMachine:OpenAQStepFunction
+              - >-
+                arn:aws:events:us-east-1:533267130424:rule/StepFunctionsGetEventsForStepFunctionsExecutionRule
+              - arn:aws:lambda:us-east-1:533267130424:function:getHealthData
+              - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes

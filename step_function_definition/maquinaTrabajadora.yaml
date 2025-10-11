@@ -1,28 +1,270 @@
-Comment: "Máquina trabajadora que procesa un lote de sensores OpenAQ"
-StartAt: Map
-States:
-  Map:
-    Type: Map
-    ItemProcessor:
-      ProcessorConfig:
-        Mode: INLINE
-      StartAt: Obtener mediciones para cada sensor
-      States:
-        Obtener mediciones para cada sensor:
-          Type: Task
-          Resource: "arn:aws:states:::lambda:invoke"
-          Parameters:
-            FunctionName: "${LambdaGetOpenAqDataArn}" # <-- Usa la variable que definimos en el template.yaml
-            Payload:
-              "$": "$"
-          Retry:
-            - ErrorEquals:
-                - "Lambda.ServiceException"
-                - "Lambda.AWSLambdaException"
-                - "Lambda.SdkClientException"
-              IntervalSeconds: 2
-              MaxAttempts: 3
-              BackoffRate: 2
-          End: true
-    End: true
-    MaxConcurrency: 1 # Puedes aumentar la concurrencia si la API lo permite
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  StateMachine9dc33bfc:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Definition:
+        Comment: A description of my state machine
+        StartAt: Map
+        States:
+          Map:
+            Type: Map
+            ItemProcessor:
+              ProcessorConfig:
+                Mode: INLINE
+              StartAt: Obtener mediciones para cada sensor
+              States:
+                Obtener mediciones para cada sensor:
+                  Type: Task
+                  Resource: arn:aws:states:::lambda:invoke
+                  Output: '{% $states.result.Payload %}'
+                  Arguments:
+                    FunctionName: ${lambdainvoke_FunctionName_3b6f8908}
+                    Payload: '{% $states.input %}'
+                  Retry:
+                    - ErrorEquals:
+                        - Lambda.ServiceException
+                        - Lambda.AWSLambdaException
+                        - Lambda.SdkClientException
+                        - Lambda.TooManyRequestsException
+                      IntervalSeconds: 1
+                      MaxAttempts: 3
+                      BackoffRate: 2
+                      JitterStrategy: FULL
+                  End: true
+            End: true
+            MaxConcurrency: 1
+        QueryLanguage: JSONata
+      DefinitionSubstitutions:
+        lambdainvoke_FunctionName_3b6f8908: >-
+          arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data:$LATEST
+      Name: StateMachine9dc33bfc
+      Type: STANDARD
+      Role:
+        Fn::GetAtt:
+          - Role9df11950
+          - Arn
+      Logging:
+        Level: 'ALL'
+        IncludeExecutionData: true
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn:
+                Fn::GetAtt:
+                  - LogGroup38c580ec
+                  - Arn
+  Role9df11950:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: StepFunctions_IAM_ROLE_OpenAQStepFunctionf0a2396e
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+                - lambda.amazonaws.com
+                - states.amazonaws.com
+            Action: sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
+  Policy610db110:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSLambdaBasicExecutionRole3a70b7de
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: arn:aws:logs:us-east-1:533267130424:*
+          - Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - >-
+                arn:aws:logs:us-east-1:533267130424:log-group:/aws/lambda/read_csv_from_s3:*
+  Policy55758cb7:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSLambdaS3ExecutionRole8400c6b1
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListAllMyBuckets
+            Resource: arn:aws:s3:::*
+  Policy3db586c0:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: AWSGlueConsoleRoleInlinePolicy111d273e
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:PutObject
+            Resource:
+              - arn:aws:s3:::tfm-ucm/*
+              - arn:aws:s3:::tfm-ucm
+  Policy4a11b476:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: GetSecretValuefa96952d
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - '*'
+  Policyc3f1fb0d:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: glue_BatchCreatePartitionb33d13bc
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - glue:BatchCreatePartition
+            Resource:
+              - arn:aws:glue:us-east-1:533267130424:catalog
+              - arn:aws:glue:us-east-1:533267130424:database/tfm-ucm
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
+  Policy69292b9e:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: glue_GetTable09030c64
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - glue:GetTable
+            Resource:
+              - arn:aws:glue:us-east-1:533267130424:catalog
+              - arn:aws:glue:us-east-1:533267130424:database/tfm-ucm
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/measurments
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/parameters
+              - arn:aws:glue:us-east-1:533267130424:table/tfm-ucm/locations
+  Policy49b3833b:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: lambda_InvokeFunction0000f8af
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource:
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:get_openaq_sensors
+              - arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:get_open_aq_data:$LATEST
+              - arn:aws:lambda:us-east-1:533267130424:function:getHealthData
+              - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
+  Policycd78b3d7:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: logs67af4157
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogDelivery
+              - logs:GetLogDelivery
+              - logs:UpdateLogDelivery
+              - logs:DeleteLogDelivery
+              - logs:ListLogDeliveries
+              - logs:PutResourcePolicy
+              - logs:DescribeResourcePolicies
+              - logs:DescribeLogGroups
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: '*'
+  Policy1bd8d81d:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: read26567742
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:DeleteObject
+            Resource: arn:aws:s3:::tfm-ucm/*
+  Policyaff2ece5:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      PolicyName: StepFunction2751f7ca
+      RoleName:
+        Ref: Role9df11950
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+              - states:RedriveExecution
+              - states:DescribeExecution
+              - states:StartExecution
+              - states:StopExecution
+              - events:PutTargets
+              - events:PutRule
+              - events:DescribeRule
+            Resource:
+              - arn:aws:states:*:533267130424:express:*:*:*
+              - arn:aws:states:*:533267130424:stateMachine:*
+              - arn:aws:states:*:533267130424:execution:*:*
+              - >-
+                arn:aws:states:us-east-1:533267130424:stateMachine:OpenAQStepFunction
+              - >-
+                arn:aws:events:us-east-1:533267130424:rule/StepFunctionsGetEventsForStepFunctionsExecutionRule
+              - arn:aws:lambda:us-east-1:533267130424:function:getHealthData
+              - arn:aws:lambda:us-east-1:533267130424:function:get_ree_data
+              - >-
+                arn:aws:lambda:us-east-1:533267130424:function:DividirSensoresEnLotes
+  LogGroup38c580ec:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/vendedlogs/states/StateMachine9dc33bfc-Logs
