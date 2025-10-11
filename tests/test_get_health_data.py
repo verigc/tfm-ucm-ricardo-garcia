@@ -8,7 +8,7 @@ import pytest
 
 def load_module():
 	"""Load the lambda module directly from the file path."""
-	path = Path(__file__).resolve().parent.parent / "lambda_function.py"
+	path = Path(__file__).resolve().parent.parent / "lambda_functions" / "getHealthData" / "getHealthData.py"
 	spec = importlib.util.spec_from_file_location("gethealth_lambda", str(path))
 	mod = importlib.util.module_from_spec(spec)
 	spec.loader.exec_module(mod)
