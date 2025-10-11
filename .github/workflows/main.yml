@@ -3,10 +3,14 @@ name: Deploy SAM Application to AWS
 on:
   push:
     branches:
-      - master # O la rama que uses para despliegue
+      - develop # Despliega al ambiente de Staging
+      - master  # Despliega al ambiente de Producción
+  pull_request:
+    branches:
+      - develop
 
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Esto es CRÍTICO: Permite que el workflow solicite un token OIDC
@@ -46,8 +50,18 @@ jobs:
 
       - name: Build SAM application
         run: sam build --use-container # Puedes usar --use-container si tienes dependencias nativas o para mayor aislamiento
+      
+      - name: Deploy to STAGING
+        if: github.ref == 'refs/heads/develop' # Solo si el push es a 'develop'
+        run: |
+          sam deploy \
+            --stack-name tfm-ucm-staging-stack \
+            --s3-bucket tfm-ucm-artefactos-staging \
+            --parameter-overrides S3BucketName=tfm-ucm-artefactos-staging \
+            # ... (Otros flags y capacidades)
 
-      - name: Deploy SAM application
+      - name: Deploy to PRODUCTION
+        if: github.ref == 'refs/heads/master' # Solo si el push es a 'master'
         run: |
           sam deploy \
           --no-confirm-changeset \
